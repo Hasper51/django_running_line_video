@@ -54,7 +54,7 @@ def create_text_video_opencv(message, width, height, video_length):
     total_frames = video_length * fps
     output_path = os.path.join(settings.MEDIA_ROOT, f"{message}.mp4")
     # Настройка видеопотока
-    out = cv2.VideoWriter(output_path.replace('\\', '/'), cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+    out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
     
     
     # Создаем кадр с черным фоном
