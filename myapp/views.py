@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import os
 from django.conf import settings
-
+from .models import VideoRequest
 from django.http import FileResponse,HttpResponse, Http404, HttpResponseBadRequest
 from .forms import VideoForm
 
@@ -17,9 +17,19 @@ def create_video(request):
             width = form.cleaned_data['width']
             height = form.cleaned_data['height']
             duration = form.cleaned_data['duration']
-
+            
+            # Создаём видео с динамическим именем
             video_path = create_text_video_opencv(message,width,height,duration)
             
+            # Сохраняем запрос в базу данных
+            video_request = VideoRequest.objects.create(
+                message=message,
+                duration=duration,
+                width=width,
+                height=height,
+                file_name=os.path.basename(video_path)
+            )
+
             if os.path.exists(video_path):
                 return FileResponse(open(video_path, 'rb'), as_attachment=True, filename=f"{message}.mp4")
                 # with open(video_path, 'rb') as fh:
