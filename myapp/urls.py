@@ -4,7 +4,7 @@ from . import views
 
 
 urlpatterns = [
-    path("myapp/", views.video_text, name="video_text"),
+    path("create_video/", views.create_video, name="create_video"),
     
 ]
 

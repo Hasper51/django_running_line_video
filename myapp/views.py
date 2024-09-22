@@ -3,37 +3,52 @@ import cv2
 import numpy as np
 import os
 from django.conf import settings
-# Create your views here.
+
 from django.http import FileResponse,HttpResponse, Http404, HttpResponseBadRequest
-from django.core.files.storage import default_storage
+from .forms import VideoForm
 
-def video_text(request):
-    text = request.GET.get('text')
-    if not text:
-        return HttpResponseBadRequest("Параметр 'text' обязателен")
+def create_video(request):
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = VideoForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            message = form.cleaned_data['message']
+            width = form.cleaned_data['width']
+            height = form.cleaned_data['height']
+            duration = form.cleaned_data['duration']
+
+            video_path = create_text_video_opencv(message,width,height,duration)
+            
+            if os.path.exists(video_path):
+                return FileResponse(open(video_path, 'rb'), as_attachment=True, filename=f"{message}.mp4")
+                # with open(video_path, 'rb') as fh:
+                #     # response = HttpResponse(fh.read(), content_type="application/force-download")
+                #     # response['Content-Disposition'] = f'attachment; filename=' + os.path.basename(file_path)
+                #     response = HttpResponse(fh.read(), content_type='video/mp4')
+                #     response['Content-Disposition'] = f'attachment; filename={text}.mp4'
+                #     return response
+            raise Http404
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = VideoForm()
+
+    return render(request, 'index.html', {'form': form})
     
-    video_path = create_text_video_opencv(text)
     
-    print(video_path)
     
-    if os.path.exists(video_path):
-        return FileResponse(open(video_path, 'rb'), as_attachment=True, filename=f"{text}.mp4")
-        # with open(video_path, 'rb') as fh:
-        #     # response = HttpResponse(fh.read(), content_type="application/force-download")
-        #     # response['Content-Disposition'] = f'attachment; filename=' + os.path.basename(file_path)
-        #     response = HttpResponse(fh.read(), content_type='video/mp4')
-        #     response['Content-Disposition'] = f'attachment; filename={text}.mp4'
-        #     return response
-    raise Http404
+    
+    
     
 
-def create_text_video_opencv(message):
+def create_text_video_opencv(message, width, height, video_length):
     # Текст для вывода
     # message = request.GET.get('text')
     # Параметры видео
-    width, height = 100, 100  # Разрешение видео
+    # width, height = 100, 100  # Разрешение видео
     fps = 24  # Кадров в секунду
-    video_length = 3  # Длительность видео в секундах
+    # video_length = 3  # Длительность видео в секундах
 
     # Рассчитаем общее количество кадров
     total_frames = video_length * fps
