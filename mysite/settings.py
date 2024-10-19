@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-#stlo0bat@zw*5sf_i=!)^p(p2@8@#ixiv@2!u&2-7&k7rwxqk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost',"mullet-wise-redbird.ngrok-free.app"]
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'recruto_test'
 ]
 
 MIDDLEWARE = [
