@@ -11,7 +11,7 @@ def greet(request):
 
     # Формируем ответ
     if name and message:
-        response = f"<h1>Hello {name}! {message}</h1>"
+        response = f"<h1>Hello {name}! {message}!</h1>"
     else:
         response = "Введите параметры name и message в адресной строке"
     return HttpResponse(response)
